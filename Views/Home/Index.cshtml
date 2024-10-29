@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@inject IConfiguration config
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <button id="btnWebAPI">Call Web API</button>
+    <button id="btnCPUOp">CPU Bound Op</button>
+    <button id="btnLocalOperation">Call Local Operation</button>
+    <button id="btnCancel">Cancel Ops</button>
+</div>
+
+<ul>
+    <li>
+        Default Connection: @config.GetConnectionString("Default")
+    </li>
+    <li>
+        Root Value: @(config.GetValue<string>("RootValue"))
+    </li>
+    <li>
+        Nested Value: @(config.GetValue<string>("Nested.NestedValue"))
+    </li>
+</ul>
+
+<diV id='apiResponse'></diV>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#btnWebAPI').click(function () {
+            //using fetch API 
+            @* fetch('http://localhost:5137/api/LongOperation')
+                .then(res => {
+                    if(res.ok) {
+                alert('APi response recieved');
+                }
+                    else {
+                alert('Network issue');
+                }
+                }) *@
+
+                $.ajax({
+                    type: "GET",
+                    url: "/Home/CallWebApi",
+                    success: function (response) {
+                        alert(JSON.stringify(response));
+                    },
+                    error: function (response) {
+                        alert(error.statusText);
+                    }
+                });
+        });
+
+        $('#btnCPUOp').click(function () {
+            $.ajax({
+                type: 'GET',
+                url: '/Home/CPUBoundOperations',
+                success: function (response) {
+                    alert(JSON.stringify(response));
+                },
+                error: function (response) {
+                    alert(error.statusText);
+                }
+            });
+        });
+
+        $('#btnCancel').click(function () {
+            $.ajax({
+                type: "GET",
+                url: "/Home/CancelTask",
+                success: function (response) {
+                    alert(JSON.stringify(response));
+                },
+                error: function (response) {
+                    alert(error.statusText);
+                }
+            });
+        });
+
+        $('#btnLocalOperation').click(function () {
+            alert('Local Operation called');
+        });
+    });
+</script>
